@@ -124,7 +124,7 @@ function formatDatePt(d) {
   const dia = String(d.getDate()).padStart(2, '0');
   const mes = String(d.getMonth() + 1).padStart(2, '0');
   const ano = d.getFullYear();
-  return `${ano}-${mes}-${dia}`;
+  return `${dia}-${mes}-${ano}`;
 }
 
 // Função que interpreta datas vindas da planilha (string, número ou Date)
@@ -145,7 +145,7 @@ function extractDate(rawDate) {
     let dd = dm[1].padStart(2, '0');
     let mm = dm[2].padStart(2, '0');
     let yyyy = dm[3].length === 2 ? ('20' + dm[3]) : dm[3];
-    const parsed = new Date(`${yyyy}-${mm}-${dd}`);
+    const parsed = new Date(`${dd}-${mm}-${yyyy}`);
     if (!isNaN(parsed.getTime())) return formatDatePt(parsed);
   }
 
@@ -544,13 +544,36 @@ function carregarCurso(nome) {
 // Exclui um curso salvo
 function excluirCurso(nome) {
   if (confirm(`Deseja realmente excluir o curso "${nome}"?`)) {
+
+    // Remove do localStorage
     localStorage.removeItem("curso_" + nome);
+
+    // Recarrega a lista
     carregarListaCursos();
+
+    const select = document.getElementById("cursosSalvos");
+
+    // Pega o primeiro curso restante (se ainda houver algum)
+    if (select && select.options.length > 0) {
+      const primeiro = select.options[0].value;
+      select.value = primeiro;
+      carregarCurso(primeiro); // já carrega automaticamente
+    } else {
+      // Se não houver mais cursos => limpa totalmente
+      if (select) select.value = "";
+      ingredientes = [];
+      renderCards([]);
+      document.querySelectorAll('.resumo').forEach(e => e.remove());
+      const exportBtn = document.getElementById('exportCsvBtn');
+      if (exportBtn) exportBtn.style.display = 'none';
+    }
+
     alert("Curso excluído com sucesso!");
   }
 }
 
 
+  
 // Atualiza a lista de cursos salvos no menu suspenso
 function carregarListaCursos() {
   const select = document.getElementById("cursosSalvos");
