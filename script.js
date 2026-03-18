@@ -439,7 +439,7 @@ document.addEventListener('DOMContentLoaded', () => {
     filtrarBtn.addEventListener('click', atualizarFiltrosAuto);
   }
 
-  // 🔥 Atualização automática:
+  // Atualização automática:
   const tipoSelect = document.getElementById('tipoFiltro');
   const dataInicio = document.getElementById('dataInicio');
   const dataFim = document.getElementById('dataFim');
